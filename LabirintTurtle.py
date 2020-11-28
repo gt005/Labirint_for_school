@@ -322,6 +322,6 @@ class LabirintTurtle:
 
 
 test = LabirintTurtle()
-test.load_map('l2.txt')
+test.load_map('pre_hard_test.txt')
 test.exit_show_step()
 test.describe_turtle_path()
