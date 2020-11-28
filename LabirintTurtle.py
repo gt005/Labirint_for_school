@@ -1,21 +1,6 @@
 import time
 '''
 TODO: 
-*	*	*	🐢	*	*	*	
-*	 	 	 	*	 	*	
-*	 	*	*	*	 	*	
-*	 	 	 	 	 	*	
-*	*	*	*	 	*	*	
-*	 	 	 	 	 	*	
-*	*	*	*	 	 	*	
-*	 	 	 	 	 	*	
-*	*	*	*	*	*	*	
-
-Вперед на 0      Добавлять если сразу на выходе стоит, 
-
-не работает вообще-то)))
-если запустить hard_test, то там будет количество шагов несколько раз
-
 
 '''
 
@@ -104,7 +89,12 @@ class LabirintTurtle:
             print("\033[31m{}".format("Карта не валидна"), "\033[39m")
             return
 
-        print("\033[32mМинимальное количество ходов - {}".format(self.__minimum_steps_amount))
+        print(
+            "\033[32mМинимальное количество ходов - {}".format(
+                self.__minimum_steps_amount
+            ),
+            "\033[39m"  # Обнуление цвета
+        )
 
     def exit_show_step(self, *args, **kwargs) -> None:
         if not self.__is_map_valid:
@@ -120,8 +110,25 @@ class LabirintTurtle:
         print("\033[39m")
 
     def describe_turtle_path(self, *args, **kwargs):
-        if not self.__is_map_valid:
-            print("\033[31m{}".format("Карта не валидна"), "\033[39m")
+
+        if (self.__turtle_coordinates[0] == 0):
+            print("Повернись вправо")
+            print(f"Идти вперед на 1")
+            return
+        elif (self.__turtle_coordinates[0] == len(
+                self.__map_of_numbers
+        ) - 1):
+            print("Повернись влево")
+            print(f"Идти вперед на 1")
+            return
+        elif (self.__turtle_coordinates[1] == 0):
+            print(f"Идти вперед на 1")
+            return
+        elif (self.__turtle_coordinates[1] == len(
+                self.__map_of_numbers[0]
+        ) - 1):
+            print("Развернуться")
+            print(f"Идти вперед на 1")
             return
 
         directions_words = {
@@ -133,17 +140,15 @@ class LabirintTurtle:
         forward_length_count = 0
         current_turtle_direction = 270
         for direction in reversed(self.__way_word_description):
-            if current_turtle_direction == direction:
-                forward_length_count += 1
-            elif forward_length_count == 0 or forward_length_count == 1:
-                print(directions_words.get((direction - current_turtle_direction) % 360))
-                current_turtle_direction = direction
+            if (360 - (current_turtle_direction - direction)) % 360 == 0:
                 forward_length_count += 1
             else:
-                print(f"Вперед на {forward_length_count}")
+                print(f"Идти вперед на {forward_length_count}")
+                print(directions_words[(360 - (current_turtle_direction - direction)) % 360])
                 forward_length_count = 1
-        else:
-            print(f"Вперед на {forward_length_count}")
+                current_turtle_direction = direction
+
+        print(f"Идти вперед на {forward_length_count}")
 
     def __parse_map_from_file(
             self, field_with_coordinates, *args, **kwargs
@@ -202,11 +207,13 @@ class LabirintTurtle:
             self.__map_of_numbers[0]) - 1 or \
                 (self.__turtle_coordinates[0] == 0) or \
                 (self.__turtle_coordinates[1] == 0):
+
             self.__minimum_steps_amount = 1
             self.__out_point_row = self.__turtle_coordinates[0]
             self.__out_point_col = self.__turtle_coordinates[1]
             self.__graphics_map[self.__turtle_coordinates[0]][
                 self.__turtle_coordinates[1]] = self.__turtle_char
+
             return
 
         self.__map_of_numbers[self.__turtle_coordinates[0]][
@@ -294,7 +301,7 @@ class LabirintTurtle:
             self.__way_word_description.append(90)
             self.__way_word_description.append(90)
 
-        while self.__map_of_numbers[row][col] != 1:
+        while 1:
             self.__graphics_map[row][col] = self.__way_char
 
             if self.__map_of_numbers[row + 1][col] == \
@@ -317,11 +324,15 @@ class LabirintTurtle:
                 col -= 1
                 self.__way_word_description.append(90)
 
+            if self.__map_of_numbers[row][col] == 1:
+                break
+
         self.__graphics_map[self.__turtle_coordinates[0]][
             self.__turtle_coordinates[1]] = self.__turtle_char
 
 
 test = LabirintTurtle()
-test.load_map('pre_hard_test.txt')
+test.load_map('hard_test.txt')
 test.exit_show_step()
+test.exit_count_step()
 test.describe_turtle_path()
