@@ -1,8 +1,5 @@
 import time
-'''
-TODO: 
 
-'''
 
 class LabirintTurtle:
 
@@ -12,7 +9,7 @@ class LabirintTurtle:
         self.__wall_char = '*'
         self.__way_char = '🌏'
         self.__space_char = ' '
-        self.__turtle_char = u"\U0001F422"  # - Черепашка 🌏
+        self.__turtle_char = "🐢"
         self.__is_map_valid = True
         self.__minimum_steps_amount = -1
         self.__out_point_row = -1
@@ -110,6 +107,9 @@ class LabirintTurtle:
         print("\033[39m")
 
     def describe_turtle_path(self, *args, **kwargs):
+        if not self.__is_map_valid:
+            print("\033[31m{}".format("Карта не валидна"), "\033[39m")
+            return
 
         if (self.__turtle_coordinates[0] == 0):
             print("Повернись вправо")
@@ -143,16 +143,18 @@ class LabirintTurtle:
             if (360 - (current_turtle_direction - direction)) % 360 == 0:
                 forward_length_count += 1
             else:
-                print(f"Идти вперед на {forward_length_count}")
-                print(directions_words[(360 - (current_turtle_direction - direction)) % 360])
+                if forward_length_count != 0:
+                    print(f"Идти вперед на {forward_length_count}")
                 forward_length_count = 1
+                print(directions_words[(360 - (
+                        current_turtle_direction - direction)) % 360])
                 current_turtle_direction = direction
 
         print(f"Идти вперед на {forward_length_count}")
 
     def __parse_map_from_file(
             self, field_with_coordinates, *args, **kwargs
-    ):
+    ) -> None:
 
         if not field_with_coordinates:
             self.__is_map_valid = False
@@ -167,17 +169,22 @@ class LabirintTurtle:
         self.__graphics_map = list(map(
             list,
             field_with_coordinates.split('\n'))
-        )[:-2]
+        )[:-2]  # Отображение символьной карты без пути
 
         self.__graphics_map_without_way = list(map(
             list,
             field_with_coordinates.split('\n'))
         )[:-2]
 
-        self.__turtle_coordinates = (
-            int(field_with_coordinates.split('\n')[-1]),
-            int(field_with_coordinates.split('\n')[-2])
-        )
+        try:
+            self.__turtle_coordinates = (
+                int(field_with_coordinates.split('\n')[-1]),
+                int(field_with_coordinates.split('\n')[-2])
+            )
+        except (ValueError, IndexError):
+            print("\033[31m{}".format("Карта не валидна"), "\033[39m")
+            self.__is_map_valid = False
+            return
 
         self.__queue = [self.__turtle_coordinates]
 
@@ -193,9 +200,12 @@ class LabirintTurtle:
                     return
 
         # Если координаты вне поля
-        if not (0 <= self.__turtle_coordinates[0] <= len(self.__map_of_numbers) - 1) or \
-                not (0 <= self.__turtle_coordinates[1] <= len(self.__map_of_numbers[0]) - 1) or \
-                (self.__map_of_numbers[self.__turtle_coordinates[0]][self.__turtle_coordinates[1]] == -2):
+        if not (0 <= self.__turtle_coordinates[0] <= len(
+                self.__map_of_numbers) - 1) or \
+                not (0 <= self.__turtle_coordinates[1] <= len(
+                    self.__map_of_numbers[0]) - 1) or \
+                (self.__map_of_numbers[self.__turtle_coordinates[0]][
+                     self.__turtle_coordinates[1]] == -2):
             print("\033[31m{}".format("Карта не валидна"), "\033[39m")
             self.__is_map_valid = False
             return
@@ -207,7 +217,6 @@ class LabirintTurtle:
             self.__map_of_numbers[0]) - 1 or \
                 (self.__turtle_coordinates[0] == 0) or \
                 (self.__turtle_coordinates[1] == 0):
-
             self.__minimum_steps_amount = 1
             self.__out_point_row = self.__turtle_coordinates[0]
             self.__out_point_col = self.__turtle_coordinates[1]
@@ -332,7 +341,11 @@ class LabirintTurtle:
 
 
 test = LabirintTurtle()
-test.load_map('hard_test.txt')
+test.load_map('pre_hard_test.txt')
+# test.load_map('l1.txt')
+# test.load_map('l2.txt')
+# test.load_map('hard_test.txt')
+
 test.exit_show_step()
 test.exit_count_step()
 test.describe_turtle_path()
