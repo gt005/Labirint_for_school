@@ -1,0 +1,8 @@
+.idea
+.DS_Store
+hard_test.txt
+pre_hard_test.txt
+l2.txt
+l1.txt
+venv
+help_file.py

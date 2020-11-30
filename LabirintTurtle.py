@@ -1,6 +1,3 @@
-import time
-
-
 class LabirintTurtle:
 
     def __init__(self, *args, **kwargs):
@@ -21,136 +18,18 @@ class LabirintTurtle:
         self.__way_word_description = []
         # Словесное описание дороги (тут в градусах поворота)
 
-    def load_map(self, file_name, *args, **kwargs) -> None:
-        try:
-            file_with_map = open(file_name, 'rt')
-            field_with_coordinates = file_with_map.read()
-        except TypeError:
-            print(
-                "\033[31m{}".format(
-                    "Неправильное название файла, загрузите другой файл"
-                ),
-                "\033[39m"  # Обнуление цвета
-            )
-            self.__is_map_valid = False
-            return
-        except FileNotFoundError:
-            print(
-                "\033[31m{}".format(
-                    "Файл не найден, загрузите другой файл"
-                ),
-                "\033[39m"  # Обнуление цвета
-            )
-            self.__is_map_valid = False
-            return
-        except UnicodeDecodeError:
-            print(
-                "\033[31m{}".format(
-                    "Некорректные данные файла"
-                ),
-                "\033[39m"  # Обнуление цвета
-            )
-            self.__is_map_valid = False
-            return
-
-        self.__is_map_valid = True
-        self.__parse_map_from_file(field_with_coordinates)
-
-    def show_map(self, turtle: bool = False, *args, **kwargs) -> None:
-        '''
-        Вывод карты в консоль
-        :param turtle: False - черепашка не выводится, True, выводится
-        :return: None
-        '''
-        if turtle:
-            self.__graphics_map_without_way[self.__turtle_coordinates[0]][
-                self.__turtle_coordinates[1]] = self.__turtle_char
-        else:
-            self.__graphics_map_without_way[self.__turtle_coordinates[0]][
-                self.__turtle_coordinates[1]] = self.__space_char
-        for i in self.__graphics_map_without_way:
-            print(*i, sep='\t')
-
-    def check_map(self, *args, **kwargs) -> None:
-        ''' Проверка карты на валидность '''
-        if __is_map_valid:
-            print("\033[32m{}".format("Карта валидна"), "\033[39m")
-        else:
-            print(
-                "\033[31m{}".format("Карта не валидна, введите другую"),
-                "\033[39m"  # Обнуление цвета
-            )
-
-    def exit_count_step(self, *args, **kwargs) -> None:
-        if not self.__is_map_valid:
-            print("\033[31m{}".format("Карта не валидна"), "\033[39m")
-            return
-
-        print(
-            "\033[32mМинимальное количество ходов - {}".format(
-                self.__minimum_steps_amount
-            ),
-            "\033[39m"  # Обнуление цвета
-        )
-
-    def exit_show_step(self, *args, **kwargs) -> None:
-        if not self.__is_map_valid:
-            print("\033[31m{}".format("Карта не валидна"), "\033[39m")
-            return
-        for i in self.__graphics_map:
-            for j in i:
-                if j == self.__wall_char:
-                    print("\033[33m{}".format(j), end='\t')
-                else:
-                    print(j, end='\t')
-            print()
-        print("\033[39m")
-
-    def describe_turtle_path(self, *args, **kwargs):
-        if not self.__is_map_valid:
-            print("\033[31m{}".format("Карта не валидна"), "\033[39m")
-            return
-
-        if (self.__turtle_coordinates[0] == 0):
-            print("Повернись вправо")
-            print(f"Идти вперед на 1")
-            return
-        elif (self.__turtle_coordinates[0] == len(
-                self.__map_of_numbers
-        ) - 1):
-            print("Повернись влево")
-            print(f"Идти вперед на 1")
-            return
-        elif (self.__turtle_coordinates[1] == 0):
-            print(f"Идти вперед на 1")
-            return
-        elif (self.__turtle_coordinates[1] == len(
-                self.__map_of_numbers[0]
-        ) - 1):
-            print("Развернуться")
-            print(f"Идти вперед на 1")
-            return
-
-        directions_words = {
-            90: "Повернись вправо",
-            180: "Развернуться",
-            270: "Повернись влево"
-        }
-
-        forward_length_count = 0
-        current_turtle_direction = 270
-        for direction in reversed(self.__way_word_description):
-            if (360 - (current_turtle_direction - direction)) % 360 == 0:
-                forward_length_count += 1
-            else:
-                if forward_length_count != 0:
-                    print(f"Идти вперед на {forward_length_count}")
-                forward_length_count = 1
-                print(directions_words[(360 - (
-                        current_turtle_direction - direction)) % 360])
-                current_turtle_direction = direction
-
-        print(f"Идти вперед на {forward_length_count}")
+    def __require_map_valid(func, *args, **kwargs):
+        def wrapper(self, *args, **kwargs):
+            if not self.__is_map_valid:
+                print(
+                    "\033[31m{}".format(
+                        "Карта не валидна"
+                    ),
+                    "\033[39m"  # Обнуление цвета
+                )
+                return
+            func(self, *args, **kwargs)
+        return wrapper
 
     def __parse_map_from_file(
             self, field_with_coordinates, *args, **kwargs
@@ -339,13 +218,146 @@ class LabirintTurtle:
         self.__graphics_map[self.__turtle_coordinates[0]][
             self.__turtle_coordinates[1]] = self.__turtle_char
 
+    def load_map(self, file_name=None, *args, **kwargs) -> None:
+        if file_name is None:
+            print(
+                "\033[33m{}".format(
+                    "Введите название файла"
+                ),
+                "\033[39m"  # Обнуление цвета
+            )
+            self.__is_map_valid = False
+            return
+        try:
+            file_with_map = open(file_name, 'rt')
+            field_with_coordinates = file_with_map.read()
+        except TypeError:
+            print(
+                "\033[31m{}".format(
+                    "Неправильное название файла, загрузите другой файл"
+                ),
+                "\033[39m"  # Обнуление цвета
+            )
+            self.__is_map_valid = False
+            return
+        except FileNotFoundError:
+            print(
+                "\033[31m{}".format(
+                    "Файл не найден, загрузите другой файл"
+                ),
+                "\033[39m"  # Обнуление цвета
+            )
+            self.__is_map_valid = False
+            return
+        except UnicodeDecodeError:
+            print(
+                "\033[31m{}".format(
+                    "Некорректные данные файла"
+                ),
+                "\033[39m"  # Обнуление цвета
+            )
+            self.__is_map_valid = False
+            return
 
-test = LabirintTurtle()
-test.load_map('pre_hard_test.txt')
-# test.load_map('l1.txt')
-# test.load_map('l2.txt')
-# test.load_map('hard_test.txt')
+        self.__is_map_valid = True
+        self.__parse_map_from_file(field_with_coordinates)
 
-test.exit_show_step()
-test.exit_count_step()
-test.describe_turtle_path()
+    @__require_map_valid
+    def show_map(self, turtle: bool = False, *args, **kwargs) -> None:
+        '''
+        Вывод карты в консоль
+        :param turtle: False - черепашка не выводится, True, выводится
+        :return: None
+        '''
+        if turtle:
+            self.__graphics_map_without_way[self.__turtle_coordinates[0]][
+                self.__turtle_coordinates[1]] = self.__turtle_char
+        else:
+            self.__graphics_map_without_way[self.__turtle_coordinates[0]][
+                self.__turtle_coordinates[1]] = self.__space_char
+        for i in self.__graphics_map_without_way:
+            print(*i, sep='\t')
+
+    @__require_map_valid
+    def check_map(self, *args, **kwargs) -> None:
+        ''' Проверка карты на валидность '''
+        print("\033[32m{}".format("Карта валидна"), "\033[39m")
+
+    @__require_map_valid
+    def exit_count_step(self, *args, **kwargs) -> None:
+        print(
+            "\033[32mМинимальное количество ходов - {}".format(
+                self.__minimum_steps_amount
+            ),
+            "\033[39m"  # Обнуление цвета
+        )
+
+    @__require_map_valid
+    def exit_show_step(self, *args, **kwargs) -> None:
+        for i in self.__graphics_map:
+            for j in i:
+                if j == self.__wall_char:
+                    print("\033[33m{}".format(j), end='\t')
+                else:
+                    print(j, end='\t')
+            print()
+        print("\033[39m")
+
+    @__require_map_valid
+    def describe_turtle_path(self, *args, **kwargs):
+        if (self.__turtle_coordinates[0] == 0):
+            print("Повернись вправо")
+            print(f"Идти вперед на 1")
+            return
+        elif (self.__turtle_coordinates[0] == len(
+                self.__map_of_numbers
+        ) - 1):
+            print("Повернись влево")
+            print(f"Идти вперед на 1")
+            return
+        elif (self.__turtle_coordinates[1] == 0):
+            print(f"Идти вперед на 1")
+            return
+        elif (self.__turtle_coordinates[1] == len(
+                self.__map_of_numbers[0]
+        ) - 1):
+            print("Развернуться")
+            print(f"Идти вперед на 1")
+            return
+
+        directions_words = {
+            90: "Повернись вправо",
+            180: "Развернуться",
+            270: "Повернись влево"
+        }
+
+        forward_length_count = 0
+        current_turtle_direction = 270
+        for direction in reversed(self.__way_word_description):
+            if (360 - (current_turtle_direction - direction)) % 360 == 0:
+                forward_length_count += 1
+            else:
+                if forward_length_count != 0:
+                    print(f"Идти вперед на {forward_length_count}")
+                forward_length_count = 1
+                print(directions_words[(360 - (
+                        current_turtle_direction - direction)) % 360])
+                current_turtle_direction = direction
+
+        print(f"Идти вперед на {forward_length_count}")
+
+
+if __name__ == '__main__':
+    test = LabirintTurtle()
+    # test.load_map()
+    # test.check_map()
+    # test.show_map(turtle=True)
+    # test.exit_show_step()
+    # test.exit_count_step()
+    # test.describe_turtle_path()
+    # print('==========' * 3)
+    test.load_map("hard_test.txt")
+    # test.check_map()
+    # test.exit_count_step()
+    # test.describe_turtle_path()
+    test.exit_show_step()
