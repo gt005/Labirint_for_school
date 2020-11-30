@@ -3,8 +3,12 @@ class LabirintTurtle:
     def __init__(self, *args, **kwargs):
         self.__labyrinth_field = None
         self.__turtle_coordinates = (0, 0)
-        self.__wall_char = '💩'
+        self.__wall_char = '🚷'
         self.__way_char = '🌏'
+        self.__way_char_up = '👆'
+        self.__way_char_left = '👈'
+        self.__way_char_right = '👉'
+        self.__way_char_down = '👇'
         self.__space_char = ' '
         self.__turtle_char = "🐢"  # На всякий случай: 🐢 🌏 🚷
         self.__is_map_valid = True
@@ -171,46 +175,55 @@ class LabirintTurtle:
             self.__is_map_valid = False
             return None
 
-        self.__graphics_map[row][col] = self.__way_char
         if row == 0:
+            self.__graphics_map[row][col] = self.__way_char_up
             row += 1
             self.__way_word_description.append(0)
             self.__way_word_description.append(0)
+            self.__graphics_map[row][col] = self.__way_char_up
         elif col == 0:
+            self.__graphics_map[row][col] = self.__way_char_left
             col += 1
             self.__way_word_description.append(270)
             self.__way_word_description.append(270)
+            self.__graphics_map[row][col] = self.__way_char_left
         elif row == len(self.__map_of_numbers) - 1:
+            self.__graphics_map[row][col] = self.__way_char_down
             row -= 1
             self.__way_word_description.append(180)
             self.__way_word_description.append(180)
+            self.__graphics_map[row][col] = self.__way_char_down
         else:
+            self.__graphics_map[row][col] = self.__way_char_right
             col -= 1
             self.__way_word_description.append(90)
             self.__way_word_description.append(90)
+            self.__graphics_map[row][col] = self.__way_char_right
 
         while 1:
-            self.__graphics_map[row][col] = self.__way_char
-
             if self.__map_of_numbers[row + 1][col] == \
                     self.__map_of_numbers[row][col] - 1:
                 row += 1
                 self.__way_word_description.append(0)
+                self.__graphics_map[row][col] = self.__way_char_up
 
             elif self.__map_of_numbers[row - 1][col] == \
                     self.__map_of_numbers[row][col] - 1:
                 row -= 1
                 self.__way_word_description.append(180)
+                self.__graphics_map[row][col] = self.__way_char_down
 
             elif self.__map_of_numbers[row][col + 1] == \
                     self.__map_of_numbers[row][col] - 1:
                 col += 1
                 self.__way_word_description.append(270)
+                self.__graphics_map[row][col] = self.__way_char_left
 
             elif self.__map_of_numbers[row][col - 1] == \
                     self.__map_of_numbers[row][col] - 1:
                 col -= 1
                 self.__way_word_description.append(90)
+                self.__graphics_map[row][col] = self.__way_char_right
 
             if self.__map_of_numbers[row][col] == 1:
                 break
@@ -359,11 +372,11 @@ if __name__ == '__main__':
     # test.exit_count_step()
     # test.describe_turtle_path()
     # print('==========' * 3)
-    test.load_map("l1.txt")
+    test.load_map("l2.txt")
     # test.check_map()
     test.exit_count_step()
-    test.describe_turtle_path()
+    # test.describe_turtle_path()
 
-    test.show_map(turtle=True)
+    # test.show_map(turtle=True)
     print()
     test.exit_show_step()
