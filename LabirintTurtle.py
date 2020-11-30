@@ -3,10 +3,10 @@ class LabirintTurtle:
     def __init__(self, *args, **kwargs):
         self.__labyrinth_field = None
         self.__turtle_coordinates = (0, 0)
-        self.__wall_char = '*'
+        self.__wall_char = '💩'
         self.__way_char = '🌏'
         self.__space_char = ' '
-        self.__turtle_char = "🐢"
+        self.__turtle_char = "🐢"  # На всякий случай: 🐢 🌏 🚷
         self.__is_map_valid = True
         self.__minimum_steps_amount = -1
         self.__out_point_row = -1
@@ -264,19 +264,17 @@ class LabirintTurtle:
 
     @__require_map_valid
     def show_map(self, turtle: bool = False, *args, **kwargs) -> None:
-        '''
-        Вывод карты в консоль
-        :param turtle: False - черепашка не выводится, True, выводится
-        :return: None
-        '''
         if turtle:
             self.__graphics_map_without_way[self.__turtle_coordinates[0]][
                 self.__turtle_coordinates[1]] = self.__turtle_char
         else:
             self.__graphics_map_without_way[self.__turtle_coordinates[0]][
                 self.__turtle_coordinates[1]] = self.__space_char
+
         for i in self.__graphics_map_without_way:
-            print(*i, sep='\t')
+            print('\t'.join(i).replace(
+                '*', self.__wall_char
+            ).replace(' ', self.__space_char))
 
     @__require_map_valid
     def check_map(self, *args, **kwargs) -> None:
@@ -296,8 +294,14 @@ class LabirintTurtle:
     def exit_show_step(self, *args, **kwargs) -> None:
         for i in self.__graphics_map:
             for j in i:
-                if j == self.__wall_char:
-                    print("\033[33m{}".format(j), end='\t')
+                if j == '*':
+                    print(
+                        "\033[33m{}".format(self.__wall_char),
+                        "\033[39m",
+                        end='\t'
+                    )
+                elif j == ' ':
+                    print(self.__space_char, end='\t')
                 else:
                     print(j, end='\t')
             print()
@@ -352,12 +356,14 @@ if __name__ == '__main__':
     # test.load_map()
     # test.check_map()
     # test.show_map(turtle=True)
-    # test.exit_show_step()
     # test.exit_count_step()
     # test.describe_turtle_path()
     # print('==========' * 3)
-    test.load_map("hard_test.txt")
+    test.load_map("l1.txt")
     # test.check_map()
-    # test.exit_count_step()
-    # test.describe_turtle_path()
+    test.exit_count_step()
+    test.describe_turtle_path()
+
+    test.show_map(turtle=True)
+    print()
     test.exit_show_step()
