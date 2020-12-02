@@ -3,7 +3,7 @@ class LabirintTurtle:
     def __init__(self, *args, **kwargs):
         self.__labyrinth_field = None
         self.__turtle_coordinates = (0, 0)
-        self.__wall_char = '🚷'
+        self.__wall_char = '💩'
         self.__way_char = '🌏'
         self.__way_char_up = '👆'
         self.__way_char_left = '👈'
@@ -349,7 +349,7 @@ class LabirintTurtle:
         }
 
         forward_length_count = 0
-        current_turtle_direction = 270
+        current_turtle_direction = 0
         for direction in reversed(self.__way_word_description):
             if (360 - (current_turtle_direction - direction)) % 360 == 0:
                 forward_length_count += 1
@@ -371,12 +371,11 @@ if __name__ == '__main__':
     # test.show_map(turtle=True)
     # test.exit_count_step()
     # test.describe_turtle_path()
-    # print('==========' * 3)
-    test.load_map("l2.txt")
+    test.load_map("pre_hard_test.txt")
     # test.check_map()
-    test.exit_count_step()
-    # test.describe_turtle_path()
+    # test.exit_count_step()
+    test.describe_turtle_path()
 
     # test.show_map(turtle=True)
-    print()
+    # print()
     test.exit_show_step()
