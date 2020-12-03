@@ -11,7 +11,7 @@ class LabirintTurtle:
         self.__way_char_down = '👇'
         self.__space_char = ' '
         self.__turtle_char = "🐢"  # На всякий случай: 🐢 🌏 🚷
-        self.__is_map_valid = True
+        self.__is_map_valid = False
         self.__minimum_steps_amount = -1
         self.__out_point_row = -1
         self.__out_point_col = -1
@@ -61,8 +61,8 @@ class LabirintTurtle:
 
         try:
             self.__turtle_coordinates = (
-                int(field_with_coordinates.split('\n')[-1]),
-                int(field_with_coordinates.split('\n')[-2])
+                int(field_with_coordinates.split('\n')[-2]),
+                int(field_with_coordinates.split('\n')[-1])
             )
         except (ValueError, IndexError):
             print("\033[31m{}".format("Карта не валидна"), "\033[39m")
@@ -365,18 +365,19 @@ class LabirintTurtle:
 
 
 if __name__ == '__main__':
+
     test = LabirintTurtle()
-    # test.load_map()
+    test.load_map("l24.txt")
     # test.check_map()
-    # test.show_map(turtle=True)
     # test.exit_count_step()
     # test.describe_turtle_path()
     # print('==========' * 3)
-    test.load_map("l2.txt")
+    # test.load_map("l200.txt")
+    # test.show_map()
     # test.check_map()
-    # test.exit_count_step()
-    test.describe_turtle_path()
+    test.exit_count_step()
+    test.exit_show_step()
+    # test.describe_turtle_path()
 
     # test.show_map(turtle=True)
-    print()
-    test.exit_show_step()
+
