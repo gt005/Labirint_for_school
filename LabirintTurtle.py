@@ -3,7 +3,7 @@ class LabirintTurtle:
     def __init__(self, *args, **kwargs):
         self.__labyrinth_field = None
         self.__turtle_coordinates = (0, 0)
-        self.__wall_char = '💩'
+        self.__wall_char = '*'
         self.__way_char = '🌏'
         self.__way_char_up = '👆'
         self.__way_char_left = '👈'
